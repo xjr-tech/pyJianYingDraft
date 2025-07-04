@@ -16,12 +16,16 @@ setup(
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",
         "Operating System :: Microsoft :: Windows",
+        "Operating System :: MacOS",
+        "Operating System :: POSIX :: Linux",
         "Topic :: Multimedia :: Video"
     ],
     python_requires='>=3.8',
     install_requires=[
         "pymediainfo",
-        "imageio",
-        "uiautomation>=2"
+        "imageio"
     ],
+    extras_require={
+        ':platform_system == "Windows"': ['uiautomation>=2']
+    }
 )

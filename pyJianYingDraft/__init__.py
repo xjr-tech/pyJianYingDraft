@@ -1,3 +1,5 @@
+import sys
+
 from .local_materials import Crop_settings, Video_material, Audio_material
 from .keyframe import Keyframe_property
 
@@ -19,7 +21,23 @@ from .track import Track_type
 from .template_mode import Shrink_mode, Extend_mode
 from .script_file import Script_file
 from .draft_folder import Draft_folder
-from .jianying_controller import Jianying_controller, Export_resolution, Export_framerate
+
+# UI automation is only available on Windows
+if sys.platform == "win32":
+    from .jianying_controller import Jianying_controller, Export_resolution, Export_framerate
+else:
+    # Provide placeholder classes for non-Windows platforms
+    class Jianying_controller:
+        def __init__(self):
+            raise NotImplementedError("剪映UI自动化功能仅在Windows系统上可用 / JianYing UI automation is only available on Windows")
+    
+    class Export_resolution:
+        def __init__(self):
+            raise NotImplementedError("剪映UI自动化功能仅在Windows系统上可用 / JianYing UI automation is only available on Windows")
+    
+    class Export_framerate:
+        def __init__(self):
+            raise NotImplementedError("剪映UI自动化功能仅在Windows系统上可用 / JianYing UI automation is only available on Windows")
 
 from .time_util import SEC, tim, trange
 

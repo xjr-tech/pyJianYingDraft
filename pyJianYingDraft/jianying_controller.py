@@ -1,7 +1,13 @@
 """剪映自动化控制，主要与自动导出有关"""
 
+import sys
 import time
 import shutil
+
+# Check platform before importing Windows-specific modules
+if sys.platform != "win32":
+    raise ImportError("剪映UI自动化功能仅在Windows系统上可用 / JianYing UI automation is only available on Windows")
+
 import uiautomation as uia
 
 from enum import Enum
