@@ -414,7 +414,7 @@ class Script_file:
     def import_srt(self, srt_path: str, track_name: str, *,
                    time_offset: Union[str, float] = 0.0,
                    style_reference: Optional[Text_segment] = None,
-                   text_style: Text_style = Text_style(size=5, align=1),
+                   text_style: Text_style = Text_style(size=5, align=1, auto_wrapping=True),
                    clip_settings: Optional[Clip_settings] = Clip_settings(transform_y=-0.8)) -> "Script_file":
         """从SRT文件中导入字幕, 支持传入一个`Text_segment`作为样式参考
 
@@ -736,14 +736,17 @@ class Script_file:
                     if mat["id"] != sub_material_id:
                         continue
 
-                    if isinstance(mat["content"], str):
-                        mat["content"] = new_text
-                    else:
+                    try:
                         content = json.loads(mat["content"])
                         if recalc_style:
                             content["styles"] = __recalc_style_range(len(content["text"]), len(new_text), content["styles"])
                         content["text"] = new_text
                         mat["content"] = json.dumps(content, ensure_ascii=False)
+                    except json.JSONDecodeError:
+                        mat["content"] = new_text
+                    except TypeError:
+                        mat["content"] = new_text
+
                     break
             replaced = True
             break
@@ -784,8 +787,7 @@ class Script_file:
                 self.content["materials"][material_type].extend(material_list)
 
         # 对轨道排序并导出
-        track_list: List[Base_track] = list(self.tracks.values())
-        track_list.extend(self.imported_tracks)
+        track_list: List[Base_track] = list(self.imported_tracks + list(self.tracks.values()))  # 新加入的轨道在列表末尾（上层）
         track_list.sort(key=lambda track: track.render_index)
         self.content["tracks"] = [track.export_json() for track in track_list]
 
